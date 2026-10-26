@@ -102,16 +102,25 @@ $$W_{\text{urgency}} = \min\left(3.0, \frac{1.0}{t_{\text{impact}} + 0.3}\right)
 
 $$\vec{v}_{\text{avoid}} = \left( \frac{\Delta x}{\text{distance}} \cdot \text{panic} \cdot W_{\text{urgency}} \cdot 3.6, \; \frac{\Delta y}{\text{distance}} \cdot \text{panic} \cdot 1.5 \right)$$
 
+
 ### 3. Kinematic Trajectory Prediction
-For falling projectiles, the agent evaluates the time remaining until the obstacle crosses the agent baseline altitude ($d_{\text{floor}}$):
 
-$$d_{\text{floor}} = \text{FLOOR\_Y} - y_{\text{hazard}}$$
+For falling projectiles, the agent evaluates the time remaining until the obstacle crosses the agent baseline altitude (\(d_{\text{floor}}\)):
 
-$$t_{\text{impact}} = \left( \frac{d_{\text{floor}}}{v_y} \right) \cdot \left(\frac{1}{60}\right)$$
+$$
+d_{\text{floor}} = \text{FLOOR\_Y} - y_{\text{hazard}}
+$$
 
-$$x_{\text{projected}} = x_{\text{hazard}} + \left( \frac{v_x}{v_y} \right) \cdot d_{\text{floor}}$$
+$$
+t_{\text{impact}} = \frac{d_{\text{floor}}}{v_y} \cdot \frac{1}{60}
+$$
+
+$$
+x_{\text{projected}} = x_{\text{hazard}} + \left(\frac{v_x}{v_y}\right) \cdot d_{\text{floor}}
+$$
 
 Obstacles with imminent impact times receive immediate evasion priority over hazards higher in the arena.
+  
 
 ### 4. Spatial Risk Learning and Decay
 The floor corridor is segmented into 16 discrete columns ($50\text{px}$ each). When hit, a localized penalty is stamped into the active and neighboring columns:
