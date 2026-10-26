@@ -6,6 +6,12 @@ The project demonstrates low-level game engineering fundamentals without externa
 
 ---
 
+## Version 1 Demo: Steering and Obstacle Avoidance
+
+![Version 1 Demo](screenshots/demo.gif)
+
+---
+
 ## Tech Stack
 
 * Language: C (C17 standard)
@@ -60,4 +66,4 @@ The attractive force and all repulsive forces are summed and renormalized every 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/marclourens19/game-ai-dodger.git
+   git clone [https://github.com/marclourens19/game-ai-dodger.git](https://github.com/marclourens19/game-ai-dodger.git)
