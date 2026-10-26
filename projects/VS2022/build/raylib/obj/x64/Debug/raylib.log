@@ -1,0 +1,14 @@
+﻿  raudio.c
+  rcore.c
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(130,9): warning C4005: 'APIENTRY': macro redefinition
+  (compiling source file '../../../../../../../../../raylib/raylib/src/rcore.c')
+      C:\raylib\raylib\src\external\glfw\include\GLFW\glfw3.h(123,11):
+      see previous definition of 'APIENTRY'
+  
+  rmodels.c
+  rglfw.c
+  rshapes.c
+  rtext.c
+  rtextures.c
+  Generating Code...
+  raylib.vcxproj -> C:\Users\joshu\OneDrive\Documents\Dev\raylib-game-template\projects\VS2022\build\raylib\bin\x64\Debug\raylib.lib
