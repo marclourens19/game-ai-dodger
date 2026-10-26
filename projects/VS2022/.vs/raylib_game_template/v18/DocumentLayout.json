@@ -43,8 +43,7 @@
               "RelativeToolTip": "..\\..\\src\\screens.h",
               "ViewState": "AgIAADkAAAAAAAAAAAAAABgAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-10-26T12:07:28.185Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-26T12:07:28.185Z"
             },
             {
               "$type": "Document",
@@ -56,8 +55,7 @@
               "RelativeToolTip": "..\\..\\src\\screen_options.c",
               "ViewState": "AgIAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2026-10-26T11:06:23.46Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-26T11:06:23.46Z"
             },
             {
               "$type": "Document",
@@ -69,8 +67,7 @@
               "RelativeToolTip": "..\\..\\src\\screen_logo.c",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2026-10-26T12:14:21.802Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-26T12:14:21.802Z"
             },
             {
               "$type": "Document",
@@ -82,8 +79,7 @@
               "RelativeToolTip": "..\\..\\src\\screen_gameplay.c",
               "ViewState": "AgIAAD0DAAAAAAAAAAAAAD0DAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2026-10-26T09:02:57.147Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-26T09:02:57.147Z"
             },
             {
               "$type": "Document",
@@ -95,8 +91,7 @@
               "RelativeToolTip": "..\\..\\src\\screen_ending.c",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2026-10-26T11:08:55.694Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-26T11:08:55.694Z"
             },
             {
               "$type": "Document",
@@ -121,8 +116,7 @@
               "RelativeToolTip": "..\\..\\src\\screen_title.c",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2026-10-26T11:06:48.407Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-26T11:06:48.407Z"
             }
           ]
         }

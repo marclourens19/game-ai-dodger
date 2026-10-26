@@ -1,2 +1,8 @@
-﻿  screen_gameplay.c
+﻿  raylib_game.c
+  screen_ending.c
+  screen_gameplay.c
+  screen_logo.c
+  screen_options.c
+  screen_title.c
+  Generating Code...
   raylib_game.vcxproj -> C:\Users\joshu\OneDrive\Documents\Dev\raylib-game-template\projects\VS2022\build\raylib_game\bin\x64\Debug\raylib_game.exe
