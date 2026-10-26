@@ -158,35 +158,35 @@ $$
 
 ### 3. Kinematic Trajectory Prediction
 
-For falling projectiles, the agent estimates the time remaining until the obstacle crosses the agent baseline altitude ($d_{\text{floor}}$) and extrapolates its landing intercept:
+For falling projectiles, the agent estimates the time remaining until the obstacle crosses the agent baseline altitude ($d_{\text{floor}}$) and predicts its landing position.
 
-$$
-d_{\text{floor}} = \text{FLOOR\_Y} - y_{\text{hazard}}
-$$
+```math
+d_{\text{floor}} = y_{\text{floor}} - y_{\text{hazard}}
+```
 
-$$
-t_{\text{impact}} = \left(\frac{d_{\text{floor}}}{v_y}\right) \cdot \left(\frac{1}{60}\right)
-$$
+```math
+t_{\text{impact}} = \frac{d_{\text{floor}}}{v_y} \cdot \frac{1}{60}
+```
 
-$$
-x_{\text{projected}} = x_{\text{hazard}} + \left(\frac{v_x}{v_y}\right) \cdot d_{\text{floor}}
-$$
+```math
+x_{\text{projected}} = x_{\text{hazard}} + \frac{v_x}{v_y} \cdot d_{\text{floor}}
+```
 
 #### Variable Glossary
 
-- $\text{FLOOR\_Y}$: The constant Y-coordinate of the baseline floor/ground plane where the agent operates.
-- $y_{\text{hazard}}, x_{\text{hazard}}$: Current coordinates of the falling projectile.
-- $d_{\text{floor}}$: The remaining vertical distance the hazard must travel to reach the floor line.
-- $v_x, v_y$: Horizontal and vertical velocity components of the hazard, measured in pixels per frame tick.
-- $\frac{1}{60}$: Conversion factor from simulation frames to seconds, assuming 60 FPS.
-- $t_{\text{impact}}$: Estimated time until impact, measured in seconds.
-- $x_{\text{projected}}$: The horizontal coordinate where the hazard's trajectory intersects the floor plane.
+- `FLOOR_Y`: The constant Y-coordinate of the baseline floor where the agent operates. In the equations above, it is represented by $y_{\text{floor}}$.
+- $x_{\text{hazard}}$, $y_{\text{hazard}}$: The current horizontal and vertical coordinates of the falling projectile.
+- $d_{\text{floor}}$: The remaining vertical distance the hazard must travel to reach the floor.
+- $v_x$, $v_y$: The horizontal and vertical velocity components of the hazard, measured in pixels per frame tick.
+- $\frac{1}{60}$: The conversion factor from simulation frame ticks to seconds, assuming 60 FPS.
+- $t_{\text{impact}}$: The estimated time until impact, measured in seconds.
+- $x_{\text{projected}}$: The predicted horizontal coordinate where the hazard's trajectory intersects the floor.
 
 #### How It Works
 
-1. **Vertical Distance Check:** Calculate the remaining vertical distance to the floor. If $v_y \leq 0$, the hazard is stationary or moving upward and is not treated as an incoming falling threat.
-2. **Time to Impact ($t_{\text{impact}}$):** Divide the remaining vertical distance by the vertical velocity to estimate the remaining number of frame ticks, then convert the result into seconds.
-3. **Landing Intercept ($x_{\text{projected}}$):** Use the ratio $\frac{v_x}{v_y}$ to estimate the hazard's horizontal drift while falling. This allows the AI to anticipate where a projectile will land and evade threats before they reach the agent's corridor.
+1. **Vertical Distance:** Calculate the remaining distance between the hazard and the floor.
+2. **Time to Impact:** Divide the remaining vertical distance by the downward velocity to estimate the number of remaining frame ticks, then convert to seconds.
+3. **Landing Prediction:** Estimate the hazard's horizontal movement during its fall to determine where it will reach the floor. This allows the AI to anticipate incoming threats and move away before impact.
 
 Obstacles with imminent impact times receive immediate evasion priority over hazards higher in the arena.
 
