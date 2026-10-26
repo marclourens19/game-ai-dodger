@@ -6,19 +6,19 @@ A lightweight 2D game AI simulation built in C using Raylib. The project demonst
 
 ## Version 3: Multi-Mode Simulation & Interactive Sandbox
 
-### Mode 1: Autonomous AI Dodger
+### Mode 0: Autonomous AI Dodger
 
 Autonomous agent evasive maneuvering powered by kinematic trajectory interception, repulsive potential field vectors, and 16-column spatial memory pathfinding.
 
 ![Version 3 AI Mode](screenshots/demofour.gif)
 
-### Mode 2: Human Benchmark (Direct Mouse Control)
+### Mode 1: Human Benchmark (Direct Mouse Control)
 
 Direct cursor positioning enabling human benchmark runs against the procedural falling hazard engine.
 
 ![Version 3 Human Mode](screenshots/demofive.gif)
 
-### Mode 3: Chaos Drop (Interactive Sandbox)
+### Mode 2: Chaos Drop (Interactive Sandbox)
 
 Interactive spawner mode allowing the user to drop custom boulders directly onto the AI agent with real-time mouse-wheel radius scaling.
 
@@ -52,24 +52,24 @@ Basic vector normalization steering and static circle-to-circle obstacle avoidan
 
 ## Tech Stack
 
-- **Language:** C (C17 standard)
-- **Framework:** Raylib (v5.0+)
-- **Audio:** Raylib OpenAL audio subsystem
+- **Language:** C
+- **Framework:** Raylib 6.0 (the root CMake configuration fetches this version by default)
+- **Audio:** Raylib audio module (miniaudio backend by default)
 - **Toolchain:** Visual Studio 2022 (MSVC) / CMake / GCC / Clang
 
 ---
 
 ## Core Systems
 
-- **Vector Steering:** Normalized Euclidean unit vectors ensuring uniform constant-velocity translation across variable framerates.
-- **Repulsive Potential Fields (APF):** Imminent threat evaluation exerting inversely scaled repulsive velocity offsets away from hazard centers.
-- **Kinematic Trajectory Prediction:** Frame-rate-independent Time-to-Impact, using `t = d / v_y`, with floor-intercept landing reticles.
+- **Vector Steering:** Normalized Euclidean unit vectors for directional steering.
+- **Repulsive Potential Fields (APF):** Imminent threat evaluation exerting proximity-scaled repulsive velocity offsets away from hazard centers.
+- **Kinematic Trajectory Prediction:** Time-to-impact estimates and floor-intercept landing reticles.
 - **Spatial Memory Grid:** 16-column learning array tracking historical collision damage with linear time decay (`2.0 units/sec`).
-- **Interactive Multi-Mode Architecture:** Clean transitions between Autonomous AI, Human Benchmark, and Chaos Sandbox modes.
-- **Live Takeover:** Seamless real-time hot-swapping between autonomous AI steering and player cursor control mid-simulation.
-- **Visual Telemetry Toggle:** Instant toggle (`[T]`) for all debug overlays, force rays, trajectory lines, APF influence bubbles, and the spatial heatmap bar.
+- **Interactive Multi-Mode Architecture:** Transitions between Autonomous AI, Human Benchmark, and Chaos Sandbox modes.
+- **Live Takeover:** Real-time switching between autonomous AI steering and player cursor control during a simulation.
+- **Visual Telemetry Toggle:** Toggle (`[T]`) for debug overlays, force rays, trajectory lines, APF influence bubbles, and the spatial heatmap bar.
 - **Dynamic Difficulty:** Procedural hazard density scaling from 3 up to 14 simultaneous falling projectiles (`+1 hazard every 6.5 s`).
-- **State Machine UI:** Modal Pause Menu (`[ESC]`) and Game Over overlay with selective memory retention (`[R]`) versus complete memory wipe (`[C]`).
+- **State Machine UI:** Pause Menu (`[ESC]`) and Game Over overlay with selective memory retention (`[R]`) or complete memory reset (`[C]`).
 
 ---
 
@@ -80,14 +80,14 @@ Basic vector normalization steering and static circle-to-circle obstacle avoidan
 | `[1]` | Switch to **Mode 0: AI Dodger** (Autonomous Simulation) |
 | `[2]` | Switch to **Mode 1: Human Benchmark** (Direct Mouse Control) |
 | `[3]` | Switch to **Mode 2: Chaos Drop** (Interactive Sandbox) |
-| `[P]` | **Live Takeover Toggle** (Hot-swap between AI and Mouse control) |
-| `[T]` | **Toggle Telemetry UI** (Show/hide trajectory lines, reticles, APF bubbles, and memory heatmap) |
+| `[P]` | **Live Takeover Toggle** (switch between AI and mouse control) |
+| `[T]` | **Toggle Telemetry UI** (show/hide trajectory lines, reticles, APF bubbles, and memory heatmap) |
 | `[ESC]` | **Toggle Pause Menu** |
-| `[R]` | **Restart Run** (Retain learned spatial risk memory) |
-| `[C]` | **Restart & Clear Memory** (Zero-initialize spatial memory heatmap) |
+| `[R]` | **Restart Run** (retain learned spatial risk memory) |
+| `[C]` | **Restart & Clear Memory** (reset the spatial memory heatmap) |
 | `[M]` | **Return to Title Menu** |
 | `Mouse Wheel` | *(Chaos Mode)* Adjust spawned boulder radius (`16 px–56 px`) |
-| `Left Click` | *(Chaos Mode)* Drop custom boulder at cursor coordinates |
+| `Left Click` | *(Chaos Mode)* Drop a custom boulder at cursor coordinates |
 
 ---
 
@@ -127,7 +127,7 @@ $$
 
 ### 3. Kinematic Trajectory Prediction
 
-For falling projectiles, the agent evaluates the time remaining until the obstacle crosses the agent baseline altitude, $d_{\text{floor}}$:
+For falling projectiles, the agent estimates the time remaining until the obstacle crosses the agent baseline altitude, $d_{\text{floor}}$:
 
 ```math
 d_{\text{floor}} = \text{FLOOR\_Y} - y_{\text{hazard}}
@@ -186,9 +186,11 @@ $$
 ### Prerequisites
 
 - CMake 3.24 or higher
-- C17-compatible C compiler (MSVC, GCC, or Clang)
+- A C compiler
 - Git
-- Raylib 5.0 or higher (if it is not fetched or configured by the project's CMake setup)
+- Internet access during initial configuration if CMake needs to download Raylib
+
+The root `CMakeLists.txt` uses CMake FetchContent to obtain Raylib 6.0 by default, while allowing an installed Raylib package to be found first.
 
 ### Build Instructions
 
@@ -199,10 +201,10 @@ $$
    cd game-ai-dodger
    ```
 
-2. Configure the project with CMake:
+2. Configure a Release build:
 
    ```bash
-   cmake -S . -B build
+   cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
    ```
 
 3. Build the project:
@@ -211,6 +213,10 @@ $$
    cmake --build build --config Release
    ```
 
-4. Run the generated executable from the build output directory. The exact path and filename depend on your operating system, CMake generator, and project configuration.
+4. Run the executable from the output directory. The current CMake project/target name is `raylib-game-template`, and CMake sets the runtime output directory to `build/raylib-game-template`. With a multi-configuration generator such as Visual Studio, a configuration directory such as `Release` may be added beneath that folder. The executable filename is `raylib-game-template` (or `raylib-game-template.exe` on Windows).
 
-   On Windows with a Visual Studio generator, the executable is commonly placed in `build/Release/`. With single-configuration generators such as Makefiles or Ninja, it is commonly placed directly in `build/`.
+---
+
+## License
+
+This project is distributed under the [MIT License](LICENSE).
