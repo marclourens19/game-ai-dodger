@@ -48,16 +48,18 @@ jobs:
           cmake --build build --config Release
 
       # 5. Prepare files for GitHub Pages
-      # Emscripten outputs everything into build/raylib-game-template/ (or similar depending on target)
-      # Let's organize it into a public folder for deployment
       - name: Prepare Artifacts
         run: |
           mkdir -p public
-          # Copy the generated html, js, and wasm files to public/
-          # Adjust "raylib-game-template" if your target executable name differs in CMakeLists.txt
+          # Copy the generated html, js, wasm, and data files to public/
           cp build/raylib-game-template/raylib-game-template.html public/index.html
           cp build/raylib-game-template/raylib-game-template.js public/ || true
           cp build/raylib-game-template/raylib-game-template.wasm public/ || true
+          cp build/raylib-game-template/raylib-game-template.data public/ || true
+
+          # Prevent GitHub Pages from ignoring or filtering raw files
+          touch public/.nojekyll
+
           # Copy resources folder if CMake places it elsewhere, or let cmake handle it
           if [ -d "build/resources" ]; then
             cp -r build/resources public/
