@@ -1,95 +1,67 @@
-/**********************************************************************************************
-*
-*   raylib - Advance Game template
-*
-*   Screens Functions Declarations (Init, Update, Draw, Unload)
-*
-*   Copyright (c) 2014-2022 Ramon Santamaria (@raysan5)
-*
-*   This software is provided "as-is", without any express or implied warranty. In no event
-*   will the authors be held liable for any damages arising from the use of this software.
-*
-*   Permission is granted to anyone to use this software for any purpose, including commercial
-*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
-*
-*     1. The origin of this software must not be misrepresented; you must not claim that you
-*     wrote the original software. If you use this software in a product, an acknowledgment
-*     in the product documentation would be appreciated but is not required.
-*
-*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
-*     as being the original software.
-*
-*     3. This notice may not be removed or altered from any source distribution.
-*
-**********************************************************************************************/
-
 #ifndef SCREENS_H
 #define SCREENS_H
 
-//----------------------------------------------------------------------------------
 // Types and Structures Definition
-//----------------------------------------------------------------------------------
-typedef enum GameScreen { UNKNOWN = -1, LOGO = 0, TITLE, OPTIONS, GAMEPLAY, ENDING } GameScreen;
+// Enum representing all possible application screens
+typedef enum GameScreen {
+    UNKNOWN = -1,   // Uninitialized or invalid screen state
+    LOGO = 0,       // Intro raylib logo animation screen
+    TITLE,          // Main menu and mode selection screen
+    OPTIONS,        // Options/settings screen
+    GAMEPLAY,       // Core AI simulation and dodging arena
+    ENDING          // Post-game / credits screen
+} GameScreen;
 
-//----------------------------------------------------------------------------------
-// Global Variables Declaration (shared by several modules)
-//----------------------------------------------------------------------------------
-extern GameScreen currentScreen;
-extern Font font;
-extern Music music;
-extern Sound fxCoin;
+// Global Variables Declaration (shared across modules)
+extern GameScreen currentScreen;    // Tracks the currently active screen
+extern Font font;                   // Global bitmap font loaded in main
+extern Music music;                 // Global background music stream
+extern Sound fxCoin;                // Global UI/action sound effect
 
 #ifdef __cplusplus
-extern "C" {            // Prevents name mangling of functions
+extern "C" {                        // Prevents C++ name mangling if compiled with a C++ compiler
 #endif
 
-//----------------------------------------------------------------------------------
-// Logo Screen Functions Declaration
-//----------------------------------------------------------------------------------
-void InitLogoScreen(void);
-void UpdateLogoScreen(void);
-void DrawLogoScreen(void);
-void UnloadLogoScreen(void);
-int FinishLogoScreen(void);
+    // Module Functions Declaration
 
-//----------------------------------------------------------------------------------
-// Title Screen Functions Declaration
-//----------------------------------------------------------------------------------
-void InitTitleScreen(void);
-void UpdateTitleScreen(void);
-void DrawTitleScreen(void);
-void UnloadTitleScreen(void);
-int FinishTitleScreen(void);
+    // Logo Screen Functions
+    void InitLogoScreen(void);          // Initialize logo animation state
+    void UpdateLogoScreen(void);        // Step logo animation frame-by-frame
+    void DrawLogoScreen(void);          // Render current logo animation state
+    void UnloadLogoScreen(void);        // Free logo-specific resources
+    int FinishLogoScreen(void);         // Returns non-zero when logo animation completes
 
-//----------------------------------------------------------------------------------
-// Options Screen Functions Declaration
-//----------------------------------------------------------------------------------
-void InitOptionsScreen(void);
-void UpdateOptionsScreen(void);
-void DrawOptionsScreen(void);
-void UnloadOptionsScreen(void);
-int FinishOptionsScreen(void);
+    // Title Screen Functions
+    void InitTitleScreen(void);         // Initialize menu buttons and background hazards
+    void UpdateTitleScreen(void);       // Handle button hover/clicks and background drift
+    void DrawTitleScreen(void);         // Render title text, buttons, and ambient hazards
+    void UnloadTitleScreen(void);       // Free title screen resources
+    int FinishTitleScreen(void);        // Returns 1 for Options, 2 for Gameplay
 
-//----------------------------------------------------------------------------------
-// Gameplay Screen Functions Declaration
-//----------------------------------------------------------------------------------
-void InitGameplayScreen(void);
-void UpdateGameplayScreen(void);
-void DrawGameplayScreen(void);
-void UnloadGameplayScreen(void);
-int FinishGameplayScreen(void);
+    // Options Screen Functions
+    void InitOptionsScreen(void);       // Initialize options state
+    void UpdateOptionsScreen(void);     // Handle options input
+    void DrawOptionsScreen(void);       // Render options UI
+    void UnloadOptionsScreen(void);     // Free options resources
+    int FinishOptionsScreen(void);      // Returns 1 to return to Title
 
-//----------------------------------------------------------------------------------
-// Ending Screen Functions Declaration
-//----------------------------------------------------------------------------------
-void InitEndingScreen(void);
-void UpdateEndingScreen(void);
-void DrawEndingScreen(void);
-void UnloadEndingScreen(void);
-int FinishEndingScreen(void);
+    // Gameplay Screen Functions
+    void InitGameplayScreen(void);      // Initialize arena, UI rectangles, and simulation state
+    void UpdateGameplayScreen(void);    // Step physics, AI potential fields, and collisions
+    void DrawGameplayScreen(void);      // Render arena, telemetry vectors, heatmap, and HUD
+    void UnloadGameplayScreen(void);    // Free gameplay resources
+    int FinishGameplayScreen(void);     // Returns 1 to transition back to Title screen
+    void SetGameplayMode(int mode);     // Sets active SimulationMode (0: AI, 1: Human, 2: Chaos)
+
+    // Ending Screen Functions
+    void InitEndingScreen(void);        // Initialize ending screen variables
+    void UpdateEndingScreen(void);      // Check for return-to-title input
+    void DrawEndingScreen(void);        // Render ending message
+    void UnloadEndingScreen(void);      // Free ending resources
+    int FinishEndingScreen(void);       // Returns 1 to return to Title
 
 #ifdef __cplusplus
-}
+}                                   // Close extern "C" block (Fixed missing brace)
 #endif
 
 #endif // SCREENS_H

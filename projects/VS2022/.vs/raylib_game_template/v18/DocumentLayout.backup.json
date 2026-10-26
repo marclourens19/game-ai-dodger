@@ -9,13 +9,19 @@
       "AbsoluteMoniker": "D:0:0:{0981CA98-E4A5-4DF1-987F-A41D09131EFC}|raylib_game\\raylib_game.vcxproj|C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_ending.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0981CA98-E4A5-4DF1-987F-A41D09131EFC}|raylib_game\\raylib_game.vcxproj|C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_title.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{0981CA98-E4A5-4DF1-987F-A41D09131EFC}|raylib_game\\raylib_game.vcxproj|C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_options.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{0981CA98-E4A5-4DF1-987F-A41D09131EFC}|raylib_game\\raylib_game.vcxproj|C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_title.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0981CA98-E4A5-4DF1-987F-A41D09131EFC}|raylib_game\\raylib_game.vcxproj|C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_logo.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0981CA98-E4A5-4DF1-987F-A41D09131EFC}|raylib_game\\raylib_game.vcxproj|C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\raylib_game.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0981CA98-E4A5-4DF1-987F-A41D09131EFC}|raylib_game\\raylib_game.vcxproj|C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screens.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -25,32 +31,19 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "screen_ending.c",
-              "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_ending.c",
-              "RelativeDocumentMoniker": "..\\..\\src\\screen_ending.c",
-              "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_ending.c",
-              "RelativeToolTip": "..\\..\\src\\screen_ending.c",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "screen_logo.c",
+              "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_logo.c",
+              "RelativeDocumentMoniker": "..\\..\\src\\screen_logo.c",
+              "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_logo.c",
+              "RelativeToolTip": "..\\..\\src\\screen_logo.c",
+              "ViewState": "AgIAAIMAAAAAAAAAAAAwwKMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2026-10-26T11:08:55.694Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "screen_title.c",
-              "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_title.c",
-              "RelativeDocumentMoniker": "..\\..\\src\\screen_title.c",
-              "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_title.c",
-              "RelativeToolTip": "..\\..\\src\\screen_title.c",
-              "ViewState": "AgIAAGwAAAAAAAAAAAAswIkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2026-10-26T11:06:48.407Z",
+              "WhenOpened": "2026-10-26T12:14:21.802Z",
               "EditorCaption": ""
             },
             {
@@ -61,34 +54,74 @@
               "RelativeDocumentMoniker": "..\\..\\src\\screen_gameplay.c",
               "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_gameplay.c",
               "RelativeToolTip": "..\\..\\src\\screen_gameplay.c",
-              "ViewState": "AgIAAMcBAAAAAAAAAAAqwNUBAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAB0DAAAAAAAAAAAwwD0DAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2026-10-26T09:02:57.147Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "raylib_game.c",
-              "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\raylib_game.c",
-              "RelativeDocumentMoniker": "..\\..\\src\\raylib_game.c",
-              "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\raylib_game.c",
-              "RelativeToolTip": "..\\..\\src\\raylib_game.c",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAACMAAABSAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2026-10-26T09:03:39.373Z"
+              "DocumentIndex": 6,
+              "Title": "screens.h",
+              "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screens.h",
+              "RelativeDocumentMoniker": "..\\..\\src\\screens.h",
+              "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screens.h",
+              "RelativeToolTip": "..\\..\\src\\screens.h",
+              "ViewState": "AgIAACgAAAAAAAAAAAAwwEgAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-10-26T12:07:28.185Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
+              "Title": "screen_ending.c",
+              "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_ending.c",
+              "RelativeDocumentMoniker": "..\\..\\src\\screen_ending.c",
+              "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_ending.c",
+              "RelativeToolTip": "..\\..\\src\\screen_ending.c",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAiwCsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-10-26T11:08:55.694Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "screen_options.c",
               "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_options.c",
               "RelativeDocumentMoniker": "..\\..\\src\\screen_options.c",
               "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_options.c",
               "RelativeToolTip": "..\\..\\src\\screen_options.c",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAwwCcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2026-10-26T11:06:23.46Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "screen_title.c",
+              "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_title.c",
+              "RelativeDocumentMoniker": "..\\..\\src\\screen_title.c",
+              "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\screen_title.c",
+              "RelativeToolTip": "..\\..\\src\\screen_title.c",
+              "ViewState": "AgIAALQAAAAAAAAAAAAwwNQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-10-26T11:06:48.407Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "raylib_game.c",
+              "DocumentMoniker": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\raylib_game.c",
+              "RelativeDocumentMoniker": "..\\..\\src\\raylib_game.c",
+              "ToolTip": "C:\\Users\\joshu\\OneDrive\\Documents\\Dev\\raylib-game-template\\src\\raylib_game.c",
+              "RelativeToolTip": "..\\..\\src\\raylib_game.c",
+              "ViewState": "AgIAAPsAAAAAAAAAAAAwwBsBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-10-26T09:03:39.373Z",
               "EditorCaption": ""
             }
           ]

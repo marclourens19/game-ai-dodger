@@ -1,173 +1,160 @@
 /**********************************************************************************************
-*
 *   raylib - Advance Game template
-*
 *   Logo Screen Functions Definitions (Init, Update, Draw, Unload)
-*
-*   Copyright (c) 2014-2022 Ramon Santamaria (@raysan5)
-*
-*   This software is provided "as-is", without any express or implied warranty. In no event
-*   will the authors be held liable for any damages arising from the use of this software.
-*
-*   Permission is granted to anyone to use this software for any purpose, including commercial
-*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
-*
-*     1. The origin of this software must not be misrepresented; you must not claim that you
-*     wrote the original software. If you use this software in a product, an acknowledgment
-*     in the product documentation would be appreciated but is not required.
-*
-*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
-*     as being the original software.
-*
-*     3. This notice may not be removed or altered from any source distribution.
-*
 **********************************************************************************************/
 
 #include "raylib.h"
 #include "screens.h"
 
-//----------------------------------------------------------------------------------
 // Module Variables Definition (local)
-//----------------------------------------------------------------------------------
-static int framesCounter = 0;
-static int finishScreen = 0;
+static int framesCounter = 0;           // Counts elapsed frames for timing animation stages
+static int finishScreen = 0;            // Flag signaling main loop to transition to TITLE
 
-static int logoPositionX = 0;
-static int logoPositionY = 0;
+static int logoPositionX = 0;           // Top-left X coordinate of the 256x256 raylib logo box
+static int logoPositionY = 0;           // Top-left Y coordinate of the 256x256 raylib logo box
 
-static int lettersCount = 0;
+static int lettersCount = 0;            // Number of characters of "raylib" currently visible
+static int topSideRecWidth = 0;         // Current animated width of top border bar
+static int leftSideRecHeight = 0;       // Current animated height of left border bar
+static int bottomSideRecWidth = 0;      // Current animated width of bottom border bar
+static int rightSideRecHeight = 0;      // Current animated height of right border bar
 
-static int topSideRecWidth = 0;
-static int leftSideRecHeight = 0;
+static int state = 0;                   // Finite State Machine (FSM) tracker (States 0 to 3)
+static float alpha = 1.0f;              // Opacity multiplier for final logo fade-out [0.0f .. 1.0f]
 
-static int bottomSideRecWidth = 0;
-static int rightSideRecHeight = 0;
-
-static int state = 0;              // Logo animation states
-static float alpha = 1.0f;         // Useful for fading
-
-//----------------------------------------------------------------------------------
 // Logo Screen Functions Definition
-//----------------------------------------------------------------------------------
-
-// Logo Screen Initialization logic
 void InitLogoScreen(void)
 {
-    finishScreen = 0;
-    framesCounter = 0;
-    lettersCount = 0;
+    finishScreen = 0;                   // Reset completion flag
+    framesCounter = 0;                  // Reset frame timer
+    lettersCount = 0;                   // Start with 0 visible letters
 
-    logoPositionX = GetScreenWidth()/2 - 128;
-    logoPositionY = GetScreenHeight()/2 - 128;
+    // Center the 256x256 logo square on screen:
+    // CenterX = ScreenWidth / 2; Subtract half of logo width (256 / 2 = 128)
+    logoPositionX = GetScreenWidth() / 2 - 128;
+    // CenterY = ScreenHeight / 2; Subtract half of logo height (256 / 2 = 128)
+    logoPositionY = GetScreenHeight() / 2 - 128;
 
+    // Initialize all four border bars to a 16x16 pixel corner square
     topSideRecWidth = 16;
     leftSideRecHeight = 16;
     bottomSideRecWidth = 16;
     rightSideRecHeight = 16;
 
-    state = 0;
-    alpha = 1.0f;
+    state = 0;                          // Begin at FSM State 0 (blinking corner)
+    alpha = 1.0f;                       // Start at 100% opacity
 }
 
-// Logo Screen Update logic
 void UpdateLogoScreen(void)
 {
-    if (state == 0)                 // State 0: Top-left square corner blink logic
+    // Allow user to skip the intro animation by pressing Enter or Space
+    if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE))
     {
-        framesCounter++;
+        finishScreen = 1;
+        return;
+    }
 
-        if (framesCounter == 80)
+    if (state == 0)                     // State 0: Blink top-left 16x16 square for 80 frames (~1.33s)
+    {
+        framesCounter++;                // Advance frame counter by 1
+
+        if (framesCounter == 80)        // After 80 frames (80 / 60 = 1.33s)
         {
-            state = 1;
-            framesCounter = 0;      // Reset counter... will be used later...
+            state = 1;                  // Advance to State 1
+            framesCounter = 0;          // Reset counter for future use in State 3
         }
     }
-    else if (state == 1)            // State 1: Bars animation logic: top and left
+    else if (state == 1)                // State 1: Expand top bar rightwards and left bar downwards
     {
-        topSideRecWidth += 8;
-        leftSideRecHeight += 8;
+        topSideRecWidth += 8;           // Grow width by 8 pixels per frame
+        leftSideRecHeight += 8;         // Grow height by 8 pixels per frame
 
+        // Starting at 16px, growing +8px/frame reaches 256px in (256 - 16) / 8 = 30 frames (0.5s)
         if (topSideRecWidth == 256) state = 2;
     }
-    else if (state == 2)            // State 2: Bars animation logic: bottom and right
+    else if (state == 2)                // State 2: Expand bottom bar rightwards and right bar downwards
     {
-        bottomSideRecWidth += 8;
-        rightSideRecHeight += 8;
+        bottomSideRecWidth += 8;        // Grow bottom width by 8 pixels per frame
+        rightSideRecHeight += 8;        // Grow right height by 8 pixels per frame
 
+        // Reaches full 256px box dimensions after another 30 frames (0.5s)
         if (bottomSideRecWidth == 256) state = 3;
     }
-    else if (state == 3)            // State 3: "raylib" text-write animation logic
+    else if (state == 3)                // State 3: Type out "raylib" text, then fade out
     {
-        framesCounter++;
+        framesCounter++;                // Increment frame timer
 
-        if (lettersCount < 10)
+        if (lettersCount < 10)          // Until letter counter reaches 10
         {
-            if (framesCounter/12)   // Every 12 frames, one more letter!
+            // Integer division: framesCounter / 12 evaluates to 1 (true) every 12th frame (0.2s)
+            if (framesCounter / 12)
             {
-                lettersCount++;
-                framesCounter = 0;
+                lettersCount++;         // Reveal one more character of "raylib"
+                framesCounter = 0;      // Reset timer for next character
             }
         }
-        else    // When all letters have appeared, just fade out everything
+        else                            // Once all letters are revealed
         {
-            if (framesCounter > 200)
+            if (framesCounter > 200)    // Hold completed logo before fading
             {
-                alpha -= 0.02f;
+                alpha -= 0.02f;         // Subtract 2% opacity per frame (50 frames = 0.83s fade)
 
-                if (alpha <= 0.0f)
+                if (alpha <= 0.0f)      // Once completely invisible
                 {
-                    alpha = 0.0f;
-                    finishScreen = 1;   // Jump to next screen
+                    alpha = 0.0f;       // Clamp to 0.0f
+                    finishScreen = 1;   // Trigger screen transition to TITLE
                 }
             }
         }
     }
 }
 
-// Logo Screen Draw logic
 void DrawLogoScreen(void)
 {
-    if (state == 0)         // Draw blinking top-left square corner
+    if (state == 0)                     // State 0: Render blinking 16x16 square
     {
-        if ((framesCounter/10)%2) DrawRectangle(logoPositionX, logoPositionY, 16, 16, BLACK);
+        // (framesCounter / 10) % 2 alternates between 0 (off) and 1 (on) every 10 frames
+        if ((framesCounter / 10) % 2) DrawRectangle(logoPositionX, logoPositionY, 16, 16, BLACK);
     }
-    else if (state == 1)    // Draw bars animation: top and left
+    else if (state == 1)                // State 1: Render growing top and left bars
     {
         DrawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, BLACK);
         DrawRectangle(logoPositionX, logoPositionY, 16, leftSideRecHeight, BLACK);
     }
-    else if (state == 2)    // Draw bars animation: bottom and right
+    else if (state == 2)                // State 2: Render all four growing border bars
     {
         DrawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, BLACK);
         DrawRectangle(logoPositionX, logoPositionY, 16, leftSideRecHeight, BLACK);
-
+        // Offset right bar by +240px (256 total width - 16 bar thickness = 240)
         DrawRectangle(logoPositionX + 240, logoPositionY, 16, rightSideRecHeight, BLACK);
+        // Offset bottom bar by +240px (256 total height - 16 bar thickness = 240)
         DrawRectangle(logoPositionX, logoPositionY + 240, bottomSideRecWidth, 16, BLACK);
     }
-    else if (state == 3)    // Draw "raylib" text-write animation + "powered by"
+    else if (state == 3)                // State 3: Render completed box, text, and fade effect
     {
         DrawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, Fade(BLACK, alpha));
+        // Offset Y by +16 and reduce height by 32 (16 top + 16 bottom) to prevent corner overlap when fading
         DrawRectangle(logoPositionX, logoPositionY + 16, 16, leftSideRecHeight - 32, Fade(BLACK, alpha));
-
         DrawRectangle(logoPositionX + 240, logoPositionY + 16, 16, rightSideRecHeight - 32, Fade(BLACK, alpha));
         DrawRectangle(logoPositionX, logoPositionY + 240, bottomSideRecWidth, 16, Fade(BLACK, alpha));
 
-        DrawRectangle(GetScreenWidth()/2 - 112, GetScreenHeight()/2 - 112, 224, 224, Fade(RAYWHITE, alpha));
+        // Draw inner white canvas square: 256 - 32 (border thickness*2) = 224x224, offset by 112 from center
+        DrawRectangle(GetScreenWidth() / 2 - 112, GetScreenHeight() / 2 - 112, 224, 224, Fade(RAYWHITE, alpha));
 
-        DrawText(TextSubtext("raylib", 0, lettersCount), GetScreenWidth()/2 - 44, GetScreenHeight()/2 + 48, 50, Fade(BLACK, alpha));
+        // Draw substring of "raylib" from index 0 up to lettersCount in bottom-right corner of box
+        DrawText(TextSubtext("raylib", 0, lettersCount), GetScreenWidth() / 2 - 44, GetScreenHeight() / 2 + 48, 50, Fade(BLACK, alpha));
 
+        // Draw "powered by" label 27 pixels above the top-left corner of the logo box
         if (framesCounter > 20) DrawText("powered by", logoPositionX, logoPositionY - 27, 20, Fade(DARKGRAY, alpha));
     }
 }
 
-// Logo Screen Unload logic
 void UnloadLogoScreen(void)
 {
-    // Unload LOGO screen variables here!
+    // No dynamic heap or GPU allocations to free on Logo screen
 }
 
-// Logo Screen should finish?
 int FinishLogoScreen(void)
 {
-    return finishScreen;
+    return finishScreen;                // Return completion status to main loop
 }

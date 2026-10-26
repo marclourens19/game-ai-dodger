@@ -1,3 +1,2 @@
 ﻿  screen_gameplay.c
-C:\Users\joshu\OneDrive\Documents\Dev\raylib-game-template\src\screen_gameplay.c(397,53): warning C4013: 'Clamp' undefined; assuming extern returning int
   raylib_game.vcxproj -> C:\Users\joshu\OneDrive\Documents\Dev\raylib-game-template\projects\VS2022\build\raylib_game\bin\x64\Debug\raylib_game.exe
