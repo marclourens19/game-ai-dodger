@@ -18,19 +18,17 @@ static Obstacle obstacles[NUM_OBSTACLES];
 
 // Runs once when the gameplay scene loads into memory
 void InitGameplayScreen(void) {
-    // Starting position for the agent on the left side
     agentPosition = (Vector2){ 100.0f, 225.0f };
 
     /*
-     * Screen resolution is 800 x 450.
-     * We place the 3 obstacles spaced out cleanly across the center:
-     * - Obstacle 0: Center, slightly lower
-     * - Obstacle 1: Upper-right
-     * - Obstacle 2: Lower-left/middle, lifted up from 450 to 320
+     * Triangle formation with plenty of clearance from all edges:
+     * - Obstacle 0 (Center): Pulsing obstacle
+     * - Obstacle 1 (Top Right): Fixed smaller obstacle
+     * - Obstacle 2 (Bottom Right): Fixed medium obstacle
      */
-    obstacles[0] = (Obstacle){ { 420.0f, 250.0f }, 65.0f, 65.0f + agentRadius + 40.0f };
-    obstacles[1] = (Obstacle){ { 630.0f, 160.0f }, 30.0f, 30.0f + agentRadius + 40.0f };
-    obstacles[2] = (Obstacle){ { 240.0f, 320.0f }, 35.0f, 35.0f + agentRadius + 40.0f };
+    obstacles[0] = (Obstacle){ { 380.0f, 225.0f }, 55.0f, 55.0f + agentRadius + 40.0f };
+    obstacles[1] = (Obstacle){ { 600.0f, 130.0f }, 30.0f, 30.0f + agentRadius + 40.0f };
+    obstacles[2] = (Obstacle){ { 580.0f, 330.0f }, 38.0f, 38.0f + agentRadius + 40.0f };
 }
 
 // Executes 60 times per second to update math, state, and coordinates
@@ -41,7 +39,7 @@ void UpdateGameplayScreen(void) {
      */
     
      // Oscillates smoothly between 40px and 70px (base 55px +/- 15px)
-    float newRadius = 55.0f + sinf((float)GetTime() * 2.0f) * 15.0f;
+    float newRadius = 55.0f + sinf((float)GetTime() * 2.0f) * 12.0f;
     obstacles[0].radius = newRadius;
     obstacles[0].avoidDangerRadius = newRadius + agentRadius + 40.0f;
 
