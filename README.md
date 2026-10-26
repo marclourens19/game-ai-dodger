@@ -93,9 +93,9 @@ Basic vector normalization steering and static circle-to-circle obstacle avoidan
 
 ## AI Math Breakdown
 
-### 1. Vector Seeking
+### 1. Vector Seeking (Normalized Directional Steering)
 
-To steer toward a target coordinate, the agent calculates a directional delta vector and normalizes it by Euclidean distance:
+To steer toward a target coordinate, the agent calculates a directional displacement vector and normalizes it by Euclidean distance:
 
 $$
 \Delta x = x_{\text{target}} - x_{\text{agent}}, \quad \Delta y = y_{\text{target}} - y_{\text{agent}}
@@ -109,9 +109,23 @@ $$
 \vec{v}_{\text{seek}} = \left( \frac{\Delta x}{\text{distance}}, \frac{\Delta y}{\text{distance}} \right)
 $$
 
-### 2. Obstacle Evasion (Artificial Potential Fields)
+#### Variable Glossary
+* $x_{\text{agent}}, y_{\text{agent}}$: Current 2D Cartesian coordinates of the AI agent's center.
+* $x_{\text{target}}, y_{\text{target}}$: World-space coordinates of the destination point (such as the center of the safest corridor column).
+* $\Delta x, \Delta y$: The directional displacement vector components (run and rise) from the agent to the target.
+* $\text{distance}$: The straight-line scalar distance (Euclidean $L_2$ norm) between the agent and target.
+* $\vec{v}_{\text{seek}}$: The normalized unit direction vector ($\|\vec{v}_{\text{seek}}\| = 1.0$).
 
-When inside an obstacle's detection radius (`R_danger`), the agent computes a repulsive vector pointing away from the hazard center, scaled by proximity:
+#### How It Works
+1. **Displacement:** Subtracting the agent's position from the target's position provides an unconstrained vector pointing directly toward the goal.
+2. **Euclidean Metric:** The Pythagorean theorem computes the scalar magnitude. If $\text{distance} = 0$, normalization is bypassed to guard against division-by-zero errors.
+3. **Unit Normalization:** Dividing $\Delta x$ and $\Delta y$ by $\text{distance}$ strips magnitude information while preserving pure direction. Multiplying $\vec{v}_{\text{seek}}$ by the agent's baseline movement speed ensures uniform movement velocity regardless of how close or far the target is.
+
+---
+
+### 2. Obstacle Evasion (Artificial Potential Fields - APF)
+
+When inside an obstacle's detection radius ($R_{\text{danger}}$), the agent computes a repulsive vector pointing away from the hazard center, scaled by proximity and temporal urgency:
 
 $$
 \text{panic} = \frac{R_{\text{danger}} - \text{distance}}{R_{\text{danger}}}
@@ -125,23 +139,54 @@ $$
 \vec{v}_{\text{avoid}} = \left( \frac{\Delta x}{\text{distance}} \cdot \text{panic} \cdot W_{\text{urgency}} \cdot 3.6,\; \frac{\Delta y}{\text{distance}} \cdot \text{panic} \cdot 1.5 \right)
 $$
 
+#### Variable Glossary
+* $R_{\text{danger}}$: Threat radius of the hazard (physical circle radius plus the agent's safety detection margin).
+* $\text{distance}$: Current Euclidean distance between the center of the agent and the center of the hazard.
+* $\text{panic}$: Normalized proximity ratio bounded between $[0.0, 1.0]$.
+* $t_{\text{impact}}$: Kinematically projected time (in seconds) until the hazard reaches the agent's floor baseline.
+* $W_{\text{urgency}}$: Time-to-impact urgency multiplier.
+* $\Delta x, \Delta y$: Relative positional offset measured from the hazard center to the agent center ($x_{\text{agent}} - x_{\text{hazard}}, y_{\text{agent}} - y_{\text{hazard}}$), directing the repulsive force outward.
+* $3.6 \text{ and } 1.5$: Directional anisotropy bias multipliers for lateral ($X$) and vertical ($Y$) evasion axes.
+* $\vec{v}_{\text{avoid}}$: The resulting repulsive velocity adjustment added to the agent's net steering sum.
+
+#### How It Works
+1. **Proximity Penetration (`panic`):** When an obstacle touches the outer threshold ($\text{distance} = R_{\text{danger}}$), $\text{panic} = 0.0$ and generates zero force. As the obstacle approaches center-to-center contact ($\text{distance} \to 0$), $\text{panic} \to 1.0$. This creates an inverse-linear falloff where closer objects exert progressively stronger defensive pressure.
+2. **Temporal Threat Scaling ($W_{\text{urgency}}$):** Spatial proximity alone is incomplete in a dynamic environment; an obstacle passing overhead at high vertical velocity is far more dangerous than one moving slowly. Scaling inversely with $t_{\text{impact}}$ causes hazards about to hit the floor to generate massive repulsion. The $+0.3$ damping offset prevents mathematical singularities (division by zero) when $t_{\text{impact}} \to 0$, and $\min(3.0, \dots)$ caps maximum force to prevent physics clipping.
+3. **Anisotropic Lateral Bias:** The horizontal component is scaled by $3.6$ while the vertical component is scaled by $1.5$. Because hazards descend along the Y-axis, escaping laterally along the X-axis is fundamentally more effective than attempting to outrun or jump over hazards vertically.
+
+---
+
 ### 3. Kinematic Trajectory Prediction
 
-For falling projectiles, the agent estimates the time remaining until the obstacle crosses the agent baseline altitude, $d_{\text{floor}}$:
+For falling projectiles, the agent estimates the time remaining until the obstacle crosses the agent baseline altitude ($d_{\text{floor}}$) and extrapolates its exact landing intercept:
 
-```math
+$$
 d_{\text{floor}} = \text{FLOOR\_Y} - y_{\text{hazard}}
-```
+$$
 
-```math
+$$
 t_{\text{impact}} = \left(\frac{d_{\text{floor}}}{v_y}\right) \cdot \left(\frac{1}{60}\right)
-```
+$$
 
-```math
+$$
 x_{\text{projected}} = x_{\text{hazard}} + \left(\frac{v_x}{v_y}\right) \cdot d_{\text{floor}}
-```
+$$
 
-Obstacles with imminent impact times receive immediate evasion priority over hazards higher in the arena.
+#### Variable Glossary
+* $\text{FLOOR\_Y}$: The constant Y-coordinate of the baseline floor/ground plane where the agent operates.
+* $y_{\text{hazard}}, x_{\text{hazard}}$: Current instantaneous coordinates of the falling projectile.
+* $d_{\text{floor}}$: The remaining vertical distance the hazard must traverse to strike the floor line.
+* $v_x, v_y$: Linear velocity components of the hazard in pixels per frame tick.
+* $\frac{1}{60}$: Conversion factor from discrete simulation ticks to elapsed physical seconds (assuming 60 FPS).
+* $t_{\text{impact}}$: Continuous time-to-impact (TTI) estimate in seconds.
+* $x_{\text{projected}}$: The horizontal coordinate where the hazard's trajectory intersects the floor plane.
+
+#### How It Works
+1. **Vertical Distance Check:** Calculates remaining vertical gap to the floor line. If $v_y \le 0$ (stationary or ascending), $t_{\text{impact}}$ is treated as infinite and disregarded.
+2. **Time to Ground ($t_{\text{impact}}$):** Under constant kinematic vertical velocity, dividing vertical displacement by vertical speed yields remaining travel frames, which are converted to real seconds.
+3. **Lateral Drift Extrapolation ($x_{\text{projected}}$):** While a projectile drops over $d_{\text{floor}}$, it drifts horizontally at a rate determined by its trajectory slope ratio $\frac{v_x}{v_y}$. Multiplying this ratio by vertical distance yields the net lateral translation. This allows the AI to preemptively evade hazards that are currently far off to the side but drifting diagonally toward the agent's corridor.
+
+---
 
 ### 4. Spatial Risk Learning and Decay
 
@@ -161,6 +206,27 @@ The agent evaluates candidate column safety by minimizing:
 
 $$
 \text{Score} = \text{riskHeatmap}[\text{col}] + \sum \left( \text{proximity} \cdot \frac{15.0}{t_{\text{impact}} + 0.25} \right) + \left( \frac{\text{travelDist}}{\text{ScreenWidth}} \right) \cdot 9.0 + \text{Penalty}_{\text{corner}}
+$$
+
+#### Variable Glossary
+* $\text{col}_{\text{hit}}$: The index ($0 \le i < 16$) of the spatial column where a physical collision occurred.
+* $\text{riskHeatmap}[i]$: Floating-point risk scalar stored in memory for column $i$.
+* $55.0 \text{ and } 22.0$: Direct-hit penalty and neighbor dispersion penalty (discrete Gaussian kernel approximation).
+* $2.0$: Linear decay rate of damage memory per elapsed second.
+* $\Delta t$: Delta time between the previous and current frame ticks (`GetFrameTime()`).
+* $\text{Score}$: Total composite threat value for a candidate column (lower is safer).
+* $\text{proximity}$: A normalized falloff scalar $[0.0, 1.0]$ representing how close a hazard's projected landing point $x_{\text{projected}}$ is to the candidate column center.
+* $\frac{15.0}{t_{\text{impact}} + 0.25}$: Dynamic threat multiplier for incoming projectiles approaching the candidate column.
+* $\frac{\text{travelDist}}{\text{ScreenWidth}} \cdot 9.0$: Travel cost heuristic penalizing distant columns to prevent erratic back-and-forth oscillation.
+* $\text{Penalty}_{\text{corner}}$: Edge boundary bias added to the leftmost and rightmost columns ($i = 0$ and $i = 15$) to prevent the agent from trapping itself against arena walls.
+
+#### How It Works
+1. **Damage Imprinting:** Upon taking damage, the agent identifies the strike column and stamps a large penalty ($+55.0$), while dispersing a secondary splash penalty ($+22.0$) to adjacent columns. This creates a localized "hot zone" that discourages the AI from returning to recent impact sites.
+2. **Linear Forgetting Function:** Without decay, the entire arena would eventually become flagged as unsafe. The linear subtraction term ($2.0 \cdot \Delta t$) combined with $\max(0.0, \dots)$ ensures the heatmap gradually resets to zero over time, allowing the AI to re-explore previously dangerous columns once hazards clear.
+3. **Multi-Objective Cost Optimization:** Every frame, the pathfinder iterates across all 16 columns and evaluates the candidate objective function. It balances historical memory, incoming kinematic threats, total distance required to travel, and corner trap avoidance. The agent selects and steers toward the column with the lowest overall cost score:
+
+$$
+\text{col}_{\text{optimal}} = \arg\min_{i} \left( \text{Score}_i \right)
 $$
 
 ---
@@ -197,7 +263,7 @@ The root `CMakeLists.txt` uses CMake FetchContent to obtain Raylib 6.0 by defaul
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/marclourens19/game-ai-dodger.git
+   git clone [https://github.com/marclourens19/game-ai-dodger.git](https://github.com/marclourens19/game-ai-dodger.git)
    cd game-ai-dodger
    ```
 
