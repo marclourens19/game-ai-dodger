@@ -127,19 +127,19 @@ $$
 
 ### 3. Kinematic Trajectory Prediction
 
-For falling projectiles, the agent evaluates the time remaining until the obstacle crosses the agent baseline altitude (`d_floor`):
+For falling projectiles, the agent evaluates the time remaining until the obstacle crosses the agent baseline altitude, $d_{\text{floor}}$:
 
-$$
+```math
 d_{\text{floor}} = \text{FLOOR\_Y} - y_{\text{hazard}}
-$$
+```
 
-$$
-t_{\text{impact}} = \left( \frac{d_{\text{floor}}}{v_y} \right) \cdot \left( \frac{1}{60} \right)
-$$
+```math
+t_{\text{impact}} = \left(\frac{d_{\text{floor}}}{v_y}\right) \cdot \left(\frac{1}{60}\right)
+```
 
-$$
-x_{\text{projected}} = x_{\text{hazard}} + \left( \frac{v_x}{v_y} \right) \cdot d_{\text{floor}}
-$$
+```math
+x_{\text{projected}} = x_{\text{hazard}} + \left(\frac{v_x}{v_y}\right) \cdot d_{\text{floor}}
+```
 
 Obstacles with imminent impact times receive immediate evasion priority over hazards higher in the arena.
 
