@@ -60,4 +60,4 @@ The attractive force and all repulsive forces are summed and renormalized every 
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/](https://github.com/)marclourens19/game-ai-dodger.git
+   git clone https://github.com/marclourens19/game-ai-dodger.git
