@@ -1,96 +1,63 @@
------------------------------------
-_DISCLAIMER:_
+# 2D Autonomous AI Dodger (Raylib + C)
 
-Welcome to the **raylib game template**!
+A lightweight 2D game AI simulation built in C using Raylib. 
 
-This template provides a base structure to start developing a small raylib game in plain C. The repo is also pre-configured with a default `LICENSE` (zlib/libpng) and a `README.md` (this one) to be properly filled by users. Feel free to change the LICENSE as required.
+The project demonstrates low-level game engineering fundamentals without external physics engines: normalized vector mathematics, Artificial Potential Fields (APF) for real-time obstacle avoidance, dynamic boundary constraints, and visual debug telemetry.
 
-All the sections defined by `$(Data to Fill)` are expected to be edited and filled properly. It's recommended to delete this disclaimer message after editing this `README.md` file.
+---
 
------------------------------------
+## Tech Stack
 
-## Getting Started with this template
+* Language: C (C17 standard)
+* Framework: Raylib
+* Environment: Visual Studio 2022 (MSVC) / CMake
 
-### Windows: Visual Studio
+---
 
-- After extracting the zip, the parent folder `raylib-game-template` should exist in the same directory as `raylib` itself.  So, your file structure should look like this:
-    - Some parent directory
-        - `raylib`
-            - the contents of https://github.com/raysan5/raylib
-        - `raylib-game-template`
-            - this `README.md` and all other raylib-game-template files
-- If using Visual Studio, open projects/VS2022/raylib-game-template.sln
-- Select on `raylib_game` in the solution explorer, then in the toolbar at the top, click `Project` > `Set as Startup Project`
-- Now you're all set up!  Click `Local Windows Debugger` with the green play arrow and the project will run.
+## Core Systems
 
-### Linux
+* Vector Steering: Normalized unit vectors for constant-velocity movement.
+* Repulsive Potential Fields: Dynamic evasion forces with linear distance falloff.
+* Struct Array Processing: Batch-updating obstacles in a cache-friendly array structure.
+* Debug Telemetry: Real-time visual vectors, spatial danger bubbles, and coordinate tracking.
 
-When setting up this template on linux for the first time, install the dependencies from this page:
-([Working on GNU Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux))
+---
 
-You can use this templates in a few ways: using Visual Studio, using CMake, or make your own build setup. This repository comes with Visual Studio and CMake already set up.
+## AI Math Breakdown
 
-Chose one of the follow setup options that fit in you development environment.
+### 1. Vector Seeking
+To steer toward a target coordinate, the agent calculates a directional vector and divides by its Euclidean distance:
 
-### CLI: Makefile
+* dx = target.x - agent.x
+* dy = target.y - agent.y
+* distance = sqrt(dx * dx + dy * dy)
+* seekX = dx / distance
+* seekY = dy / distance
 
-```sh
-mkdir ~/raylib-gamejam && cd ~/raylib-gamejam
-git clone --depth 1 --branch 6.0 https://github.com/raysan5/raylib
-make -C raylib/src
-git clone https://github.com/$(User Name)/$(Repo Name).git
-cd $(Repo Name)
-make -C src
-src/raylib_game
-```
+### 2. Obstacle Evasion
+When inside an obstacle's detection radius, the agent calculates a repulsive force pointing directly away from the obstacle center. The force scales with proximity:
 
-This template has been created to be used with raylib (www.raylib.com) and it's licensed under an unmodified zlib/libpng license.
+* panicFactor = (dangerRadius - distance) / dangerRadius
+* avoidX = (fromObsX / distance) * panicFactor * weight
+* avoidY = (fromObsY / distance) * panicFactor * weight
 
-_Copyright (c) 2014-2026 Ramon Santamaria ([@raysan5](https://github.com/raysan5))_
+### 3. Force Blending
+The attractive force and all repulsive forces are summed and renormalized every tick. This ensures the agent slides around obstacles without exceeding its fixed movement speed.
 
------------------------------------
+---
 
-## $(Game Title)
+## Visual Telemetry Guide
 
-![$(Game Title)](screenshots/screenshot000.png "$(Game Title)")
+* Blue Circle: AI Agent
+* Dark Grey Circles: Solid Obstacles
+* Red Translucent Circles: AI Hazard Detection Zones
+* Orange Lines: Active Repulsive Force Vectors
+* Grey Line: Primary Target Direction
 
-### Description
+---
 
-$(Your Game Description)
+## Building and Running
 
-### Features
-
- - $(Game Feature 01)
- - $(Game Feature 02)
- - $(Game Feature 03)
-
-### Controls
-
-Keyboard:
- - $(Game Control 01)
- - $(Game Control 02)
- - $(Game Control 03)
-
-### Screenshots
-
-_TODO: Show your game to the world, animated GIFs recommended!._
-
-### Developers
-
- - $(Developer 01) - $(Role/Tasks Developed)
- - $(Developer 02) - $(Role/Tasks Developed)
- - $(Developer 03) - $(Role/Tasks Developed)
-
-### Links
-
- - YouTube Gameplay: $(YouTube Link)
- - itch.io Release: $(itch.io Game Page)
- - Steam Release: $(Steam Game Page)
-
-### License
-
-This project sources are licensed under an unmodified zlib/libpng license, which is an OSI-certified, BSD-like license that allows static linking with closed source software. Check [LICENSE](LICENSE) for further details.
-
-$(Additional Licenses)
-
-*Copyright (c) $(Year) $(User Name) ($(User Twitter/GitHub Name))*
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/marclourens19/game-ai-dodger.git
