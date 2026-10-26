@@ -103,7 +103,7 @@ $$W_{\text{urgency}} = \min\left(3.0, \frac{1.0}{t_{\text{impact}} + 0.3}\right)
 $$\vec{v}_{\text{avoid}} = \left( \frac{\Delta x}{\text{distance}} \cdot \text{panic} \cdot W_{\text{urgency}} \cdot 3.6, \; \frac{\Delta y}{\text{distance}} \cdot \text{panic} \cdot 1.5 \right)$$
 
 ### 3. Kinematic Trajectory Prediction
-For falling projectiles, the agent evaluates the time remaining until the obstacle crosses the agent baseline altitude ($\text{FLOOR\_Y}$):
+For falling projectiles, the agent evaluates the time remaining until the obstacle crosses the agent baseline altitude ($d_{\text{floor}}$):
 
 $$d_{\text{floor}} = \text{FLOOR\_Y} - y_{\text{hazard}}$$
 
