@@ -1,14 +1,24 @@
 # 2D Autonomous AI Dodger (Raylib + C)
 
-A lightweight 2D game AI simulation built in C using Raylib. 
+A lightweight 2D game AI simulation built in C using Raylib.
 
-The project demonstrates low-level game engineering fundamentals without external physics engines: normalized vector mathematics, Artificial Potential Fields (APF) for real-time obstacle avoidance, dynamic boundary constraints, and visual debug telemetry.
+The project demonstrates low-level game engineering fundamentals without external physics engines: normalized vector mathematics, Artificial Potential Fields (APF) for real-time obstacle avoidance, kinematic trajectory prediction, spatial memory learning grids, and dynamic boundary constraints.
 
 ---
 
-## Version 1 Demo: Steering and Obstacle Avoidance
+## Version 2: Predictive Trajectory and Spatial Learning
 
-![Version 1 Demo](screenshots/demo.gif)
+### Dynamic Hazards and Trajectory Prediction
+![Version 2 Trajectory Prediction](screenshots/demotwo.gif)
+
+### Spatial Memory Heatmap and Collision Learning
+![Version 2 Spatial Memory Learning](screenshots/demothree.gif)
+
+---
+
+## Version 1: Steering and Static Avoidance
+
+![Version 1 Steering Demo](screenshots/demo.gif)
 
 ---
 
@@ -16,7 +26,7 @@ The project demonstrates low-level game engineering fundamentals without externa
 
 * Language: C (C17 standard)
 * Framework: Raylib
-* Environment: Visual Studio 2022 (MSVC) / CMake
+* Toolchain: Visual Studio 2022 (MSVC) / CMake
 
 ---
 
@@ -24,41 +34,59 @@ The project demonstrates low-level game engineering fundamentals without externa
 
 * Vector Steering: Normalized unit vectors for constant-velocity movement.
 * Repulsive Potential Fields: Dynamic evasion forces with linear distance falloff.
-* Struct Array Processing: Batch-updating obstacles in a cache-friendly array structure.
-* Debug Telemetry: Real-time visual vectors, spatial danger bubbles, and coordinate tracking.
+* Kinematic Trajectory Prediction: Real-time time-to-impact calculations ($t = d / v$) with floor projection reticles.
+* Spatial Memory Grid: 16-column learning array that penalizes past damage locations with linear time decay.
+* Dynamic Difficulty: Hazard scaling from 3 to 12 simultaneous falling projectiles.
+* Arena Clamping: Strict corridor constraints, 3-life hit tracking, and damage invulnerability frames.
+* Visual Debug Telemetry: Active force vectors, intent lines, floor risk heatmaps, and impact reticles.
 
 ---
 
 ## AI Math Breakdown
 
 ### 1. Vector Seeking
-To steer toward a target coordinate, the agent calculates a directional vector and divides by its Euclidean distance:
+To steer toward a target coordinate, the agent calculates a directional delta vector and normalizes it by Euclidean distance:
 
 * dx = target.x - agent.x
 * dy = target.y - agent.y
 * distance = sqrt(dx * dx + dy * dy)
-* seekX = dx / distance
-* seekY = dy / distance
+* seekVector = (dx / distance, dy / distance)
 
-### 2. Obstacle Evasion
-When inside an obstacle's detection radius, the agent calculates a repulsive force pointing directly away from the obstacle center. The force scales with proximity:
+### 2. Obstacle Evasion (Potential Fields)
+When inside an obstacle's detection radius, the agent computes a repulsive vector pointing away from the hazard center, scaled by proximity:
 
 * panicFactor = (dangerRadius - distance) / dangerRadius
-* avoidX = (fromObsX / distance) * panicFactor * weight
-* avoidY = (fromObsY / distance) * panicFactor * weight
+* avoidVector = (fromObstacle / distance) * panicFactor * weight
 
-### 3. Force Blending
-The attractive force and all repulsive forces are summed and renormalized every tick. This ensures the agent slides around obstacles without exceeding its fixed movement speed.
+### 3. Kinematic Trajectory Prediction
+For falling projectiles, the agent evaluates time remaining until the obstacle crosses the agent baseline altitude:
+
+* distanceToFloor = floorY - hazard.y
+* timeToImpact = (distanceToFloor / speedY) * (1 / 60)
+* urgencyWeight = 1.0 / (timeToImpact + 0.3)
+
+Obstacles with imminent impact times receive immediate evasion priority over hazards higher in the arena.
+
+### 4. Spatial Risk Learning and Decay
+The floor corridor is segmented into 16 discrete columns. When hit, a risk penalty is stamped into the active column:
+
+* riskHeatmap[hitColumn] += 55.0
+* Decay tick: riskHeatmap[i] -= 2.0 * dt
+
+The agent scans all columns every tick to select the target corridor with the lowest combined threat score.
 
 ---
 
 ## Visual Telemetry Guide
 
-* Blue Circle: AI Agent
-* Dark Grey Circles: Solid Obstacles
-* Red Translucent Circles: AI Hazard Detection Zones
+* Blue Circle: AI Agent (flashes red during invincibility frames)
+* Dark Grey Circles: Solid Physical Hazards
+* Translucent Red Radii: Hazard Influence Bubbles
+* Vertical Grey Lines: Projected Hazard Fall Trajectories
+* Red Floor Rings: Real-time Impact Reticles (brighten on near impact)
 * Orange Lines: Active Repulsive Force Vectors
-* Grey Line: Primary Target Direction
+* Cyan Vertical Line: Current Target Column Selected by AI
+* Floor Heatmap Bar: Spatial Memory Grid (Green = Safe, Red = High Risk)
 
 ---
 
