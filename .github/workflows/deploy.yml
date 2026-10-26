@@ -1,0 +1,83 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"] # Change to "master" if your default branch is master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 1. Install Emscripten SDK
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.56 # You can match this with your preferred emscripten version
+
+      # 2. Install CMake and build dependencies (like Ninja or Make if needed)
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential xorg-dev libgl1-mesa-dev
+
+      # 3. Configure CMake with Web platform toolchain
+      - name: Configure CMake for Web
+        run: |
+          emcmake cmake -B build -DPLATFORM=Web
+
+      # 4. Build the project
+      - name: Build Project
+        run: |
+          cmake --build build --config Release
+
+      # 5. Prepare files for GitHub Pages
+      # Emscripten outputs everything into build/raylib-game-template/ (or similar depending on target)
+      # Let's organize it into a public folder for deployment
+      - name: Prepare Artifacts
+        run: |
+          mkdir -p public
+          # Copy the generated html, js, and wasm files to public/
+          # Adjust "raylib-game-template" if your target executable name differs in CMakeLists.txt
+          cp build/raylib-game-template/raylib-game-template.html public/index.html
+          cp build/raylib-game-template/raylib-game-template.js public/ || true
+          cp build/raylib-game-template/raylib-game-template.wasm public/ || true
+          # Copy resources folder if CMake places it elsewhere, or let cmake handle it
+          if [ -d "build/resources" ]; then
+            cp -r build/resources public/
+          elif [ -d "src/resources" ]; then
+            cp -r src/resources public/
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'public'
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
