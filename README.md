@@ -158,7 +158,7 @@ $$
 
 ### 3. Kinematic Trajectory Prediction
 
-For falling projectiles, the agent estimates the time remaining until the obstacle crosses the agent baseline altitude ($d_{\text{floor}}$) and extrapolates its exact landing intercept:
+For falling projectiles, the agent estimates the time remaining until the obstacle crosses the agent baseline altitude ($d_{\text{floor}}$) and extrapolates its landing intercept:
 
 $$
 d_{\text{floor}} = \text{FLOOR\_Y} - y_{\text{hazard}}
@@ -173,18 +173,22 @@ x_{\text{projected}} = x_{\text{hazard}} + \left(\frac{v_x}{v_y}\right) \cdot d_
 $$
 
 #### Variable Glossary
-* $\text{FLOOR\_Y}$: The constant Y-coordinate of the baseline floor/ground plane where the agent operates.
-* $y_{\text{hazard}}, x_{\text{hazard}}$: Current instantaneous coordinates of the falling projectile.
-* $d_{\text{floor}}$: The remaining vertical distance the hazard must traverse to strike the floor line.
-* $v_x, v_y$: Linear velocity components of the hazard in pixels per frame tick.
-* $\frac{1}{60}$: Conversion factor from discrete simulation ticks to elapsed physical seconds (assuming 60 FPS).
-* $t_{\text{impact}}$: Continuous time-to-impact (TTI) estimate in seconds.
-* $x_{\text{projected}}$: The horizontal coordinate where the hazard's trajectory intersects the floor plane.
+
+- $\text{FLOOR\_Y}$: The constant Y-coordinate of the baseline floor/ground plane where the agent operates.
+- $y_{\text{hazard}}, x_{\text{hazard}}$: Current coordinates of the falling projectile.
+- $d_{\text{floor}}$: The remaining vertical distance the hazard must travel to reach the floor line.
+- $v_x, v_y$: Horizontal and vertical velocity components of the hazard, measured in pixels per frame tick.
+- $\frac{1}{60}$: Conversion factor from simulation frames to seconds, assuming 60 FPS.
+- $t_{\text{impact}}$: Estimated time until impact, measured in seconds.
+- $x_{\text{projected}}$: The horizontal coordinate where the hazard's trajectory intersects the floor plane.
 
 #### How It Works
-1. **Vertical Distance Check:** Calculates remaining vertical gap to the floor line. If $v_y \le 0$ (stationary or ascending), $t_{\text{impact}}$ is treated as infinite and disregarded.
-2. **Time to Ground ($t_{\text{impact}}$):** Under constant kinematic vertical velocity, dividing vertical displacement by vertical speed yields remaining travel frames, which are converted to real seconds.
-3. **Lateral Drift Extrapolation ($x_{\text{projected}}$):** While a projectile drops over $d_{\text{floor}}$, it drifts horizontally at a rate determined by its trajectory slope ratio $\frac{v_x}{v_y}$. Multiplying this ratio by vertical distance yields the net lateral translation. This allows the AI to preemptively evade hazards that are currently far off to the side but drifting diagonally toward the agent's corridor.
+
+1. **Vertical Distance Check:** Calculate the remaining vertical distance to the floor. If $v_y \leq 0$, the hazard is stationary or moving upward and is not treated as an incoming falling threat.
+2. **Time to Impact ($t_{\text{impact}}$):** Divide the remaining vertical distance by the vertical velocity to estimate the remaining number of frame ticks, then convert the result into seconds.
+3. **Landing Intercept ($x_{\text{projected}}$):** Use the ratio $\frac{v_x}{v_y}$ to estimate the hazard's horizontal drift while falling. This allows the AI to anticipate where a projectile will land and evade threats before they reach the agent's corridor.
+
+Obstacles with imminent impact times receive immediate evasion priority over hazards higher in the arena.
 
 ---
 
